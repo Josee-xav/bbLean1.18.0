@@ -1,0 +1,62 @@
+﻿  bbrc.c
+C:\Users\dann\Desktop\bbLean-master\lib\bbrc.c(124,5): warning C4996: '_strlwr': This function or variable may be unsafe. Consider using _strlwr_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbrc.c(139,17): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbrc.c(141,17): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbrc.c(173,17): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbrc.c(258,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbrc.c(262,13): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbrc.c(264,13): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbrc.c(299,28): warning C4996: '_strlwr': This function or variable may be unsafe. Consider using _strlwr_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbrc.c(310,23): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbrc.c(415,23): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  bbroot.c
+C:\Users\dann\Desktop\bbLean-master\lib\bbroot.c(53,5): warning C4996: '_strlwr': This function or variable may be unsafe. Consider using _strlwr_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbroot.c(136,21): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbroot.c(259,25): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\bbroot.c(265,21): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  bools.c
+  colors.c
+C:\Users\dann\Desktop\bbLean-master\lib\colors.c(228,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\colors.c(288,9): warning C4996: '_strlwr': This function or variable may be unsafe. Consider using _strlwr_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  moreutils.c
+C:\Users\dann\Desktop\bbLean-master\lib\moreutils.c(61,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\moreutils.c(63,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\moreutils.c(91,4): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\moreutils.c(93,4): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\moreutils.c(148,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\moreutils.c(248,12): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\moreutils.c(255,9): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\moreutils.c(262,9): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\moreutils.c(274,80): warning C4312: 'type cast': conversion from 'unsigned long' to 'HICON' of greater size
+C:\Users\dann\Desktop\bbLean-master\lib\moreutils.c(277,82): warning C4312: 'type cast': conversion from 'unsigned long' to 'HICON' of greater size
+  m_alloc.c
+  numbers.c
+  paths.c
+C:\Users\dann\Desktop\bbLean-master\lib\paths.c(118,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\paths.c(184,12): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  pidl.c
+C:\Users\dann\Desktop\bbLean-master\lib\pidl.c(126,17): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\pidl.c(131,17): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\pidl.c(315,13): warning C4996: 'GetVersion': was declared deprecated
+C:\Users\dann\Desktop\bbLean-master\lib\pidl.c(493,16): warning C4996: '_strupr': This function or variable may be unsafe. Consider using _strupr_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\pidl.c(542,13): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\pidl.c(545,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\pidl.c(667,16): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\pidl.c(673,16): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\pidl.c(697,12): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  strings.c
+C:\Users\dann\Desktop\bbLean-master\lib\strings.c(180,17): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  styleprops.c
+C:\Users\dann\Desktop\bbLean-master\lib\styleprops.c(83,5): warning C4996: '_strlwr': This function or variable may be unsafe. Consider using _strlwr_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  tinylist.c
+  tokenize.c
+  winutils.c
+C:\Users\dann\Desktop\bbLean-master\lib\winutils.c(31,9): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\winutils.c(32,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\winutils.c(45,10): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\winutils.c(47,5): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\winutils.c(48,5): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\lib\winutils.c(129,41): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Generating Code...
+version.lib(VERSION.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in comctl32.lib(COMCTL32.dll); second definition ignored
+  lib.vcxproj -> C:\Users\dann\Desktop\bbLean-master\blackbox\x64\Debug\lib.lib

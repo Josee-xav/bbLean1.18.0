@@ -1,0 +1,36 @@
+﻿  bbPlugin.cpp
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(89,5): warning C4996: 'GetVersionExA': was declared deprecated
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(126,9): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(264,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(349,13): warning C4551: function call missing argument list
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(350,30): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(382,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(450,13): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(862,27): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(1020,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(1159,9): warning C4551: function call missing argument list
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(1603,66): warning C4551: function call missing argument list
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(1696,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\bbPlugin.cpp(1793,5): warning C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  drawico.cpp
+  MessageBox.cpp
+  sysmenu.cpp
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\sysmenu.cpp(130,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\sysmenu.cpp(189,21): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\sysmenu.cpp(215,20): warning C4996: 'GetVersion': was declared deprecated
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\sysmenu.cpp(245,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\sysmenu.cpp(259,17): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\sysmenu.cpp(264,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\sysmenu.cpp(275,13): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\sysmenu.cpp(280,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\sysmenu.cpp(319,14): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  tooltips.cpp
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\tooltips.cpp(47,21): warning C4996: 'GetVersion': was declared deprecated
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\tooltips.cpp(114,17): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\tooltips.cpp(127,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\tooltips.cpp(156,17): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\tooltips.cpp(168,5): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\tooltips.cpp(562,13): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\dann\Desktop\bbLean-master\plugins\bbPlugin\tooltips.cpp(564,13): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Generating Code...
+  bbPlugin.vcxproj -> C:\Users\dann\Desktop\bbLean-master\blackbox\Debug\bbPlugin.lib

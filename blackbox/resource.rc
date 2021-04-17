@@ -1,0 +1,121 @@
+/* ==========================================================================
+
+  This file is part of the bbLean source code
+  Copyright © 2001-2003 The Blackbox for Windows Development Team
+  Copyright © 2004-2009 grischka
+
+  http://bb4win.sourceforge.net/bblean
+  http://developer.berlios.de/projects/bblean
+
+  bbLean is free software, released under the GNU General Public License
+  (GPL version 2). For details see:
+
+  http://www.fsf.org/licenses/gpl.html
+
+  This program is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  ========================================================================== */
+
+// !!!!!!
+// @NOTE: CANNOT include "windows.h" in .rc files on 32bit rc compiler.
+// So the values are copied from windows headers right now
+//#include "BB.h"
+#define DS_SYSMODAL         0x02L
+#define DS_MODALFRAME       0x80L   /* Can be combined with WS_CAPTION  */
+#define DS_SETFOREGROUND    0x200L  /* not in win3.1 */
+#define DS_CONTROL          0x0400L
+#define DS_CENTER           0x0800L
+#define DS_CENTERMOUSE      0x1000L
+#define DS_CONTEXTHELP      0x2000L
+#define WS_POPUP            0x80000000L
+#define WS_CAPTION          0x00C00000L     /* WS_BORDER | WS_DLGFRAME  */
+#define WS_EX_TOOLWINDOW        0x00000080L
+#define ES_AUTOHSCROLL      0x0080L
+#define WS_TABSTOP          0x00010000L
+#define WS_BORDER           0x00800000L
+#define IDOK                1
+#define IDCANCEL            2
+#define BS_FLAT             0x00008000L
+// !!!!!!
+#include <bbversion.h>
+
+#define RT_MANIFEST 24
+#define CREATEPROCESS_MANIFEST_RESOURCE_ID  1
+#define ISOLATIONAWARE_MANIFEST_RESOURCE_ID 2
+#define ISOLATIONAWARE_NOSTATICIMPORT_MANIFEST_RESOURCE_ID 3
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Edit Workspace Names (etc.) DialogBox
+//
+
+IDC_EDITBOX DIALOGEX 0,0, 200, 46
+STYLE DS_CENTER | DS_MODALFRAME | DS_SETFOREGROUND | DS_SYSMODAL | WS_POPUP | WS_CAPTION
+EXSTYLE WS_EX_TOOLWINDOW
+FONT 9, "ms shell dlg"
+BEGIN
+LTEXT       "",         401,       6,  4, 188, 8
+EDITTEXT                402,       6, 16, 188, 8  , ES_AUTOHSCROLL | WS_TABSTOP | NOT WS_BORDER
+PUSHBUTTON  "ok",       IDOK,     56, 28, 36, 12  , BS_FLAT | WS_TABSTOP
+PUSHBUTTON  "cancel",   IDCANCEL,106, 28, 36, 12  , BS_FLAT | WS_TABSTOP
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+
+#ifndef BBTINY
+IDI_BLACKBOX ICON DISCARDABLE "Blackbox_m2.ico"
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu Drag Cursor
+//
+
+IDC_MOVEMENU CURSOR DISCARDABLE "Menu/MoveMenu.cur"
+IDC_MOVEMENUL CURSOR DISCARDABLE "Menu/MoveMenuL.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION BBLEAN_NUMVERSION
+PRODUCTVERSION BBLEAN_NUMVERSION
+FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+FILEFLAGS 0x1L
+#else
+FILEFLAGS 0x0L
+#endif
+FILEOS 0x40004L
+FILETYPE 0x1L
+FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "FileVersion", BBAPPVERSION "\0"
+            VALUE "FileDescription", BBAPPNAME " Core\0"
+            VALUE "LegalCopyright", "Copyright © 2004-2009 grischka\0"
+            VALUE "OriginalFilename", "blackbox.exe\0"
+            VALUE "ProductName", "Blackbox for Windows\0"
+            VALUE "ProductVersion", BBAPPVERSION"\0"
+            VALUE "Comments", "bbZero - A new generation of Blackbox for Windows." "\r\nBased stylistically on the Blackbox window manager" " for the X Window System by Brad Hughes.\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
+/////////////////////////////////////////////////////////////////////////////

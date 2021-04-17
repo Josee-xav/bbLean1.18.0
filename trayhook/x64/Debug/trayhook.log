@@ -1,0 +1,3 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppClean.targets(77,5): warning : Access to the path 'c:\users\dann\desktop\bblean-master\blackbox\x64\debug\trayhook.dll' is denied.
+  trayhook.cpp
+LINK : fatal error LNK1104: cannot open file 'C:\Users\dann\Desktop\bbLean-master\blackbox\x64\Debug\trayhook.dll'

@@ -27,5 +27,5 @@ void MessageManager_Exit(void);
 void MessageManager_Register(HWND, const UINT* msgs, bool add);
 LRESULT MessageManager_Send(UINT message, WPARAM wParam, LPARAM lParam);
 
-//===========================================================================
+
 #endif

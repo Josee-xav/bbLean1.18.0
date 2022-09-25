@@ -28,16 +28,16 @@
 
 #include "Stylestruct.h"
 
-//===========================================================================
-// Settings.cpp functions
+
+  // Settings.cpp functions
 
 void Settings_ReadRCSettings(void);
 void Settings_ReadStyleSettings(void);
-void Settings_WriteRCSetting(const void *);
+void Settings_WriteRCSetting(const void*);
 int Settings_ItemSize(int w);
-COLORREF get_bg_color(StyleItem *pSI);
-COLORREF get_mixed_color(StyleItem *pSI);
-int checkfont (const char *face);
+COLORREF get_bg_color(StyleItem* pSI);
+COLORREF get_mixed_color(StyleItem* pSI);
+int checkfont(const char* face);
 
 //=====================================================
 // Style definitions
@@ -47,38 +47,38 @@ BBSETTING StyleStruct mStyle;
 //====================
 // Toolbar Config
 BBSETTING struct toolbar_setting {
-    char placement[20];
-    int  widthPercent;
-    char strftimeFormat[40];
-    bool onTop;
-    bool autoHide;
-    bool pluginToggle;
-    bool enabled;
-    bool alphaEnabled;
-    int  alphaValue;
+	char placement[20];
+	int  widthPercent;
+	char strftimeFormat[40];
+	bool onTop;
+	bool autoHide;
+	bool pluginToggle;
+	bool enabled;
+	bool alphaEnabled;
+	int  alphaValue;
 } Settings_toolbar;
 
 //====================
 // Menu Config
 BBSETTING struct menu_setting {
-    struct { int x, y; } pos;
-    int		popupDelay;
+	struct { int x, y; } pos;
+	int		popupDelay;
 	int		closeDelay;/* BlackboxZero 1.3.2012 */
-    int		mouseWheelFactor;
+	int		mouseWheelFactor;
 	int		minWidth;/* BlackboxZero 12.17.2011 */
-    int		maxWidth;
-    char	openDirection[20];
-    bool	onTop;
-    bool	sticky;
-    bool	pluginToggle;
-    bool	showBroams; // not saved?
-    bool	showHiddenFiles;
-    bool	sortByExtension;
-    bool	drawSeparators;
-    bool	snapWindow;
-    bool	dropShadows;
-    bool	alphaEnabled;
-    int		alphaValue;
+	int		maxWidth;
+	char	openDirection[20];
+	bool	onTop;
+	bool	sticky;
+	bool	pluginToggle;
+	bool	showBroams; // not saved?
+	bool	showHiddenFiles;
+	bool	sortByExtension;
+	bool	drawSeparators;
+	bool	snapWindow;
+	bool	dropShadows;
+	bool	alphaEnabled;
+	int		alphaValue;
 	/* BlackboxZero 1.3.2012 - 1.7.2012 */
 	int		iconSize;
 	int		iconSaturation;
@@ -172,7 +172,7 @@ BBSETTING bool Settings_disableMargins;
 //BBSETTING char Settings_rowPlacementDirection[40];
 //BBSETTING bool Settings_desktopWheel;
 
-//===========================================================================
+
 // Settings.cpp internal definitions
 
 #define V_MAR 0x0200
@@ -187,7 +187,7 @@ BBSETTING bool Settings_disableMargins;
 #define V_SHADOW (V_SHADOWX|V_SHADOWY|V_SHADOWCOLOR)
 #define V_SPLIT (V_FROMSPLITTO|V_TOSPLITTO)
 
-void ReadStyle(const char *style, StyleStruct *pStyle);
+void ReadStyle(const char* style, StyleStruct* pStyle);
 
 #ifdef BBSETTINGS_INTERNAL
 
@@ -207,15 +207,15 @@ void ReadStyle(const char *style, StyleStruct *pStyle);
 
 
 struct items {
-    short type;
-    short sn;
-    const char *rc_string;
-    int sn_def;
-    unsigned flags;
+	short type;
+	short sn;
+	const char* rc_string;
+	int sn_def;
+	unsigned flags;
 };
 
-const struct items *GetStyleItems(void);
-void* StyleStructPtr(int sn_index, StyleStruct *pStyle);
+const struct items* GetStyleItems(void);
+void* StyleStructPtr(int sn_index, StyleStruct* pStyle);
 
 #define A_TEX (V_TEX|V_CO1|V_CO2|V_BOW|V_BOC)
 #define A_FNT (V_FON|V_FHE|V_FWE|V_JUS)
@@ -223,33 +223,32 @@ void* StyleStructPtr(int sn_index, StyleStruct *pStyle);
 #define I_ACT 0x20000
 #define I_BUL 0x40000
 
-enum style_init_types
-{
-    C_INT = 1,
-    C_BOL,
-    C_STR,
-    C_COL,
-    C_STY,
+enum style_init_types {
+	C_INT = 1,
+	C_BOL,
+	C_STR,
+	C_COL,
+	C_STY,
 
-    C_TEX,
-    C_CO1,
-    C_CO2,
-    C_TXT,
-    C_PIC,
-    C_DIS,
+	C_TEX,
+	C_CO1,
+	C_CO2,
+	C_TXT,
+	C_PIC,
+	C_DIS,
 
-    C_FON,
-    C_FHE,
-    C_FWE,
-    C_JUS,
+	C_FON,
+	C_FHE,
+	C_FWE,
+	C_JUS,
 
-    C_MAR,
-    C_BOC,
-    C_BOW,
+	C_MAR,
+	C_BOC,
+	C_BOW,
 
-    C_SHT,
-    C_SHP,
-    C_SHE
+	C_SHT,
+	C_SHP,
+	C_SHE
 
 	/* BlackboxZero 1.4.2012 */
 	,
@@ -262,5 +261,5 @@ enum style_init_types
 };
 #endif
 
-//===========================================================================
+
 #endif // _BBSETTINGS_H_

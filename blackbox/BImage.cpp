@@ -159,7 +159,7 @@ static void init_dither_tables(void)
 	}
 }
 
-//===========================================================================
+
 // ColorDither for 16bit displays.
 
 // Original comment from the authors of bb4*nix:
@@ -185,7 +185,7 @@ static void TrueColorDither(struct bimage* bi)
 	}
 }
 
-//===========================================================================
+
 // brightness delta for bevels and interlaced in percent
 
 static int delta_bevel[2] = { 82, 136 }; // originally 75/150%
@@ -898,9 +898,9 @@ void bimage_init(int dither, bool is_070)
 	init_dither_tables();
 }
 
-//===========================================================================
+
 // API: CreateBorder
-//===========================================================================
+
 
 void CreateBorder(HDC hdc, RECT const* rp, COLORREF borderColor, int borderWidth)
 {
@@ -925,10 +925,10 @@ void CreateBorder(HDC hdc, RECT const* rp, COLORREF borderColor, int borderWidth
 	}
 }
 
-//===========================================================================
+
 // API: MakeStyleGradient
 // Purpose:  Make a gradient from style Item
-//===========================================================================
+
 void MakeStyleGradient(HDC hdc, RECT const* rp, StyleItem const* pSI, bool withBorder)
 {
 	int x, y, w, h, b;
@@ -956,7 +956,7 @@ void MakeStyleGradient(HDC hdc, RECT const* rp, StyleItem const* pSI, bool withB
 	}
 }
 
-//===========================================================================
+
 // API: MakeGradient
 // Purpose: creates a gradient and fills it with the specified options
 // In: HDC = handle of the device context to fill
@@ -970,7 +970,7 @@ void MakeStyleGradient(HDC hdc, RECT const* rp, StyleItem const* pSI, bool withB
 // In: int = not used
 // In: COLORREF = border color
 // In: int = width of border around bitmap
-//===========================================================================
+
 
 void MakeGradient(HDC hdc, RECT rect, int type, COLORREF Color, COLORREF ColorTo,
 	bool interlaced, int bevelstyle,
@@ -1070,9 +1070,9 @@ void MakeGradientEx(HDC hDC, RECT rect, int type, COLORREF colour_from, COLORREF
 	}
 }
 
-//===========================================================================
+
 // API: MakeGradientBitmap
-//===========================================================================
+
 
 HBITMAP MakeGradientBitmap(int width, int height, StyleItem* pSI)
 {
@@ -1085,4 +1085,4 @@ HBITMAP MakeGradientBitmap(int width, int height, StyleItem* pSI)
 	return bmp;
 }
 
-//===========================================================================
+

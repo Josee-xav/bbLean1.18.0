@@ -26,23 +26,23 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -65,13 +65,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\dann\Desktop\bbLean-master\blackbox\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>$(SolutionDir)\x64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -98,12 +99,12 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\lib\;$(SolutionDir);C:\Users\dann\Desktop\bbLean-master\3rd_party\cedar;C:\Users\dann\Desktop\bbLean-master\3rd_party\logging;C:\codeee\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\lib\;$(SolutionDir);$(SolutionDir)..\3rd_party\logging;C:\codeee\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>version.lib;comctl32.lib;lib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>version.lib;comctl32.lib;lib.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
     </Link>
@@ -136,13 +137,16 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\lib\;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\lib\;$(SolutionDir);$(SolutionDir)..\3rd_party\logging;C:\codeee\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>
+      </EnableCOMDATFolding>
+      <OptimizeReferences>
+      </OptimizeReferences>
+      <AdditionalDependencies>version.lib;comctl32.lib;lib.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)..\lib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -159,42 +163,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BBApi.cpp" />
-    <ClCompile Include="BBRoot.cpp" />
-    <ClCompile Include="BBVWM.cpp" />
-    <ClCompile Include="BImage.cpp" />
-    <ClCompile Include="Blackbox.cpp" />
-    <ClCompile Include="ConfigMenu.cpp" />
-    <ClCompile Include="Desk.cpp" />
-    <ClCompile Include="DesktopMenu.cpp" />
-    <ClCompile Include="DrawText.cpp" />
-    <ClCompile Include="Menu\CommandItem.cpp" />
-    <ClCompile Include="Menu\Contextmenu.cpp" />
-    <ClCompile Include="Menu\Dragsource.cpp" />
-    <ClCompile Include="Menu\Droptarget.cpp" />
-    <ClCompile Include="Menu\FolderItem.cpp" />
-    <ClCompile Include="Menu\Menu.cpp" />
-    <ClCompile Include="Menu\MenuItem.cpp" />
-    <ClCompile Include="Menu\MenuMaker.cpp" />
-    <ClCompile Include="Menu\RecentItem.cpp" />
-    <ClCompile Include="Menu\SearchItem.cpp" />
-    <ClCompile Include="Menu\SpecialFolder.cpp" />
-    <ClCompile Include="Menu\TitleItem.cpp" />
-    <ClCompile Include="MessageManager.cpp" />
-    <ClCompile Include="PluginManager\PluginLoaderNative.cpp" />
-    <ClCompile Include="PluginManager\PluginManager.cpp" />
-    <ClCompile Include="Search\complete.cpp" />
-    <ClCompile Include="Search\history.cpp" />
-    <ClCompile Include="Search\index.cpp" />
-    <ClCompile Include="Search\lookup.cpp" />
-    <ClCompile Include="Search\rc.cpp" />
-    <ClCompile Include="Settings.cpp" />
-    <ClCompile Include="Toolbar.cpp" />
-    <ClCompile Include="Tray.cpp" />
-    <ClCompile Include="Utils.cpp" />
-    <ClCompile Include="Workspaces.cpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="..\..\bbLean1.18.0-bbLeanWin10Fork\blackbox\WindowQueryHelpers.h" />
     <ClInclude Include="BB.h" />
     <ClInclude Include="BBApi.h" />
     <ClInclude Include="BBApiPluginloader.h" />
@@ -208,33 +177,44 @@
     <ClInclude Include="Menu\Menu.h" />
     <ClInclude Include="Menu\MenuMaker.h" />
     <ClInclude Include="Menu\RecentItem.h" />
-    <ClInclude Include="Menu\ResultItemAction.h" />
-    <ClInclude Include="Menu\SearchItem.h" />
     <ClInclude Include="MessageManager.h" />
     <ClInclude Include="PluginManager\PluginLoaderNative.h" />
     <ClInclude Include="PluginManager\PluginManager.h" />
     <ClInclude Include="PluginManager\Types.h" />
-    <ClInclude Include="Search\complete.h" />
-    <ClInclude Include="Search\config.h" />
-    <ClInclude Include="Search\history.h" />
-    <ClInclude Include="Search\index.h" />
-    <ClInclude Include="Search\jobmanager.h" />
-    <ClInclude Include="Search\lookup.h" />
-    <ClInclude Include="Search\rc.h" />
-    <ClInclude Include="Search\regex.h" />
-    <ClInclude Include="Search\search.h" />
-    <ClInclude Include="Search\SearchLocationInfo.h" />
-    <ClInclude Include="Search\serialize.h" />
-    <ClInclude Include="Search\tmp.h" />
-    <ClInclude Include="Search\unicode.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="StyleItem.h" />
     <ClInclude Include="Stylestruct.h" />
-    <ClInclude Include="Toolbar.h" />
     <ClInclude Include="Tray.h" />
     <ClInclude Include="win0x500.h" />
-    <ClInclude Include="worker.h" />
     <ClInclude Include="Workspaces.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\bbLean1.18.0-bbLeanWin10Fork\blackbox\WindowQueryHelpers.cpp" />
+    <ClCompile Include="BBApi.cpp" />
+    <ClCompile Include="BBRoot.cpp" />
+    <ClCompile Include="BBVWM.cpp" />
+    <ClCompile Include="BImage.cpp" />
+    <ClCompile Include="Blackbox.cpp" />
+    <ClCompile Include="ConfigMenu.cpp" />
+    <ClCompile Include="Desk.cpp" />
+    <ClCompile Include="DesktopMenu.cpp" />
+    <ClCompile Include="DrawText.cpp" />
+    <ClCompile Include="Menu\CommandItem.cpp" />
+    <ClCompile Include="Menu\Contextmenu.cpp" />
+    <ClCompile Include="Menu\FolderItem.cpp" />
+    <ClCompile Include="Menu\Menu.cpp" />
+    <ClCompile Include="Menu\MenuItem.cpp" />
+    <ClCompile Include="Menu\MenuMaker.cpp" />
+    <ClCompile Include="Menu\RecentItem.cpp" />
+    <ClCompile Include="Menu\SpecialFolder.cpp" />
+    <ClCompile Include="Menu\TitleItem.cpp" />
+    <ClCompile Include="MessageManager.cpp" />
+    <ClCompile Include="PluginManager\PluginLoaderNative.cpp" />
+    <ClCompile Include="PluginManager\PluginManager.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Tray.cpp" />
+    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Workspaces.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

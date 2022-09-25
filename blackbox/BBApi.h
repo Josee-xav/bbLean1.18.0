@@ -93,10 +93,12 @@
 typedef char bool;
 #define false 0
 #define true 1
+#define ISTRUE
 #define ISNULL
 #define class struct
 #else
 #define ISNULL =NULL
+#define ISTRUE =true
 #endif
 
 /*------------------------------------------ */
@@ -601,7 +603,7 @@ extern "C" {
 	API_EXPORT int GetAppByWindow(HWND hwnd, char* pszOut);
 
 	/* Is this window considered as an application */
-	API_EXPORT bool IsAppWindow(HWND hwnd);
+	API_EXPORT bool IsCheckAppWindow(HWND hwnd, bool check ISTRUE);
 
 	/* ------------------------------------ */
 	/* Desktop margins: */

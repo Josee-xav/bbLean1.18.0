@@ -22,159 +22,172 @@
 #include "BB.h"
 #include "BBVWM.h"
 #include "Workspaces.h"
+#include <dwmapi.h>
 
 #define ST static
 #define SCREEN_DIST 10
 
-struct winlist
-{
-    struct winlist *next;
-    HWND hwnd;
-    RECT rect;
-    int desk;
-    int prev_desk;
-    int save_desk;
+struct winlist {
+	struct winlist* next;
+	HWND hwnd;
+	RECT rect;
+	int desk;
+	int prev_desk;
+	int save_desk;
 
-    bool moved;
-    bool hidden;
-    bool iconic;
-    bool sticky_app;
-    bool sticky;
-    bool onbg;
-    bool istool;
-    bool check;
+	bool moved;
+	bool hidden;
+	bool iconic;
+	bool sticky_app;
+	bool sticky;
+	bool onbg;
+	bool istool;
+	bool check;
 
-    DWORD threadid;
-    HWND root;
+	DWORD threadid;
+	HWND root;
 };
 winlist g_Winlist;
 
 ST bool vwm_alt_method;
 ST bool vwm_styleXPFix;
 ST bool vwm_enabled;
-ST struct winlist *vwm_WL;
+ST struct winlist* vwm_WL;
 
-ST bool belongs_to_app(winlist *wl, winlist *wl2);
+ST bool belongs_to_app(winlist* wl, winlist* wl2);
 ST HWND get_root(HWND hwnd);
 ST bool is_shadow(HWND hwnd, LONG ex_style, DWORD threadid);
 
 //=========================================================
 // helper functions
 
-winlist * vwm_add_window (HWND hwnd)
+winlist* vwm_add_window(HWND hwnd)
 {
-    if (getWorkspaces().CheckStickyPlugin(hwnd))
-        return NULL;
+	if (getWorkspaces().CheckStickyPlugin(hwnd))
+		return NULL;
 
-    bool const hidden = FALSE == IsWindowVisible(hwnd);
-    bool const onbg = CheckOnBG(hwnd);
-    winlist * wl = (winlist*)assoc(vwm_WL, hwnd);
+	bool const hidden = FALSE == IsWindowVisible(hwnd);
+	bool const onbg = CheckOnBG(hwnd);
+	winlist* wl = (winlist*)assoc(vwm_WL, hwnd);
 
-    if (NULL == wl)
-    {
-        LONG_PTR ex_style;
-        DWORD threadid;
+	if (NULL == wl)
+	{
+		// This is for windows 10 apps to check if window it is cloaked, - clodio 11may20221
+		// if u dont have this check then u get hidden windows 10 app windows thats sometimes in the background such as calculator and such.. not sure why its in the background constantly but it is.
+		const int DWMWA_CLOAKED = 14;
+		int cloaked;
+		DwmGetWindowAttribute(hwnd, DWMWA_CLOAKED, &cloaked, sizeof(int));
+		if (cloaked != 0)
+			return NULL;
 
-        if (hidden)
-            return NULL;
+		LONG_PTR ex_style;
+		DWORD threadid;
 
-        ex_style = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
-        threadid = GetWindowThreadProcessId(hwnd, NULL);
+		if (hidden)
+			return NULL;
 
-        // exclude blackbox menu drop shadows
-        if (g_usingXP && is_shadow(hwnd, ex_style, threadid))
-            return NULL;
+		ex_style = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+		threadid = GetWindowThreadProcessId(hwnd, NULL);
 
-        wl = c_new(winlist);
-        cons_node (&vwm_WL, wl);
-        wl->hwnd = hwnd;
-        wl->desk = wl->prev_desk = getWorkspaces().GetScreenCurrent();
+		// exclude blackbox menu drop shadows
+		if (g_usingXP && is_shadow(hwnd, ex_style, threadid))
+			return NULL;
 
-        // store some infos used with 'belongs_to_app(...)'
-        wl->threadid = threadid;
-        wl->root = get_root(hwnd);
-        if ((ex_style & (WS_EX_TOOLWINDOW|WS_EX_APPWINDOW))
-            == WS_EX_TOOLWINDOW
-            && NULL == GetWindow(hwnd, GW_OWNER))
-            wl->istool = true;
+		wl = c_new(winlist);
+		cons_node(&vwm_WL, wl);
+		wl->hwnd = hwnd;
+		wl->desk = wl->prev_desk = getWorkspaces().GetScreenCurrent();
 
-        // check whether its listed in 'StickyWindows.ini'
-        wl->sticky_app = getWorkspaces().CheckStickyName(hwnd);
-        wl->onbg = getWorkspaces().CheckOnBgName(hwnd);
-    }
+		// store some infos used with 'belongs_to_app(...)'
+		wl->threadid = threadid;
+		wl->root = get_root(hwnd);
+		if ((ex_style & (WS_EX_TOOLWINDOW | WS_EX_APPWINDOW))
+			== WS_EX_TOOLWINDOW
+			&& NULL == GetWindow(hwnd, GW_OWNER))
+			wl->istool = true;
 
-    wl->hidden = hidden;
-    if (false == hidden || wl->moved)
-    {
-        wl->check = true;
-        wl->iconic = FALSE != IsIconic(hwnd);
-        if (false == wl->moved && false == wl->iconic)
-            GetWindowRect(hwnd, &wl->rect);
-    }
-    return wl;
+		// check whether its listed in 'StickyWindows.ini'
+		wl->sticky_app = getWorkspaces().CheckStickyName(hwnd);
+		wl->onbg = getWorkspaces().CheckOnBgName(hwnd);
+	}
+
+	wl->hidden = hidden;
+	if (false == hidden || wl->moved)
+	{
+		wl->check = true;
+		wl->iconic = FALSE != IsIconic(hwnd);
+		if (false == wl->moved && false == wl->iconic)
+			GetWindowRect(hwnd, &wl->rect);
+	}
+	return wl;
 }
 
-ST BOOL CALLBACK win_enum_proc (HWND hwnd, LPARAM lParam)
+ST BOOL CALLBACK win_enum_proc(HWND hwnd, LPARAM lParam)
 {
-    vwm_add_window(hwnd);
-    return TRUE;
+
+	vwm_add_window(hwnd);
+	return TRUE;
 }
 
 //=========================================================
 // update the list
 
-void vwm_update_winlist ()
+void vwm_update_winlist()
 {
-    winlist *wl, **wlp, *app;
+	winlist* wl, ** wlp, * app;
 
-    // clear check/sticky flags;
-    dolist (wl, vwm_WL)
-        wl->check = wl->sticky = false;
+	// clear check/sticky flags;
+	dolist(wl, vwm_WL)
+		wl->check = wl->sticky = false;
 
-    if (vwm_enabled)
-        EnumWindows(win_enum_proc, 0);
+	if (vwm_enabled)
+		EnumWindows(win_enum_proc, 0);
 
-    // clear not listed windows
-    for (wlp = &vwm_WL; NULL != (wl = *wlp);) {
-        if (wl->check) {
-            wlp = &wl->next;
-        } else {
-            *wlp = wl->next;
-            m_free(wl);
-        }
-    }
+	// clear not listed windows
+	for (wlp = &vwm_WL; NULL != (wl = *wlp);)
+	{
+		if (wl->check)
+		{
+			wlp = &wl->next;
+		}
+		else
+		{
+			*wlp = wl->next;
+			m_free(wl);
+		}
+	}
 
-    // check what windows belong to sticky apps
-    dolist (app, vwm_WL)
-        if (app->sticky_app)
-        {
-            dolist (wl, vwm_WL)
-                if (belongs_to_app(wl, app))
-                    wl->sticky = true;
-        }
-        else if (app->onbg)
-        {
-            dolist (wl, vwm_WL)
-                if (belongs_to_app(wl, app))
-                    wl->onbg = true;
-        }
+	// check what windows belong to sticky apps
+	dolist(app, vwm_WL)
+		if (app->sticky_app)
+		{
+			dolist(wl, vwm_WL)
+				if (belongs_to_app(wl, app))
+					wl->sticky = true;
+		}
+		else if (app->onbg)
+		{
+			dolist(wl, vwm_WL)
+				if (belongs_to_app(wl, app))
+					wl->onbg = true;
+		}
 
 
 #if 0
-    // debugging stuff
-    dbg_printf("-----------------");
-    dolist (wl, vwm_WL)
-    {
-        char buffer[100];
-        char appName[100];
-        GetClassName(wl->hwnd, buffer, sizeof buffer);
-        LONG_PTR style = GetWindowLongPtr(wl->hwnd, GWL_STYLE);
-        LONG_PTR exstyle = GetWindowLongPtr(wl->hwnd, GWL_EXSTYLE);
-        GetAppByWindow(wl->hwnd, appName);
-        dbg_printf("hw:%x ws:%d mv:%d hi:%d ic:%d st:%d <%s> (wst:%08x wex:%08x %s)",
-            wl->hwnd, wl->desk, wl->moved, wl->hidden, wl->iconic, wl->sticky, buffer, style, exstyle, appName);
-    }
-    dbg_printf("-----------------");
+	// debugging stuff
+	dbg_printf("-----------------");
+	dolist(wl, vwm_WL)
+	{
+		char buffer[100];
+		char appName[100];
+		GetClassName(wl->hwnd, buffer, sizeof buffer);
+		LONG_PTR style = GetWindowLongPtr(wl->hwnd, GWL_STYLE);
+		LONG_PTR exstyle = GetWindowLongPtr(wl->hwnd, GWL_EXSTYLE);
+		GetAppByWindow(wl->hwnd, appName);
+		dbg_printf("hw:%x ws:%d mv:%d hi:%d ic:%d st:%d <%s> (wst:%08x wex:%08x %s)",
+			wl->hwnd, wl->desk, wl->moved, wl->hidden, wl->iconic, wl->sticky, buffer, style, exstyle, appName);
+	}
+	dbg_printf("-----------------");
 #endif
 }
 
@@ -182,308 +195,333 @@ void vwm_update_winlist ()
 
 ST bool is_shadow(HWND hwnd, LONG ex_style, DWORD threadid)
 {
-    char class_name[20];
-    const unsigned wstyle = WS_EX_TRANSPARENT|WS_EX_TOOLWINDOW|WS_EX_LAYERED;
-    return wstyle == (ex_style & wstyle)
-        && threadid == BBThreadId
-        && GetClassName(hwnd, class_name, sizeof class_name)
-        && 0 == strcmp(class_name, "SysShadow")
-        ;
+	char class_name[20];
+	const unsigned wstyle = WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_LAYERED;
+	return wstyle == (ex_style & wstyle)
+		&& threadid == BBThreadId
+		&& GetClassName(hwnd, class_name, sizeof class_name)
+		&& 0 == strcmp(class_name, "SysShadow")
+		;
 }
 
 //============================================================
 // Some stuff to make shure that windows aren't lost in nirwana
 
-ST void fix_window(int *left, int *top, int width, int height)
+ST void fix_window(int* left, int* top, int width, int height)
 {
-    RECT x, d, w;
-    int x0, y0, dx, dy;
+	RECT x, d, w;
+	int x0, y0, dx, dy;
 
-    x0 = getWorkspaces().GetVScreenX();
-    y0 = getWorkspaces().GetVScreenY();
-    dx = getWorkspaces().GetVScreenWidth();
-    dy = getWorkspaces().GetVScreenHeight();
-    d.right = (d.left = x0) + dx,
-    d.bottom = (d.top = y0) + dy;
-    w.right = (w.left = *left) + width,
-    w.bottom = (w.top = *top) + height;
-    if (FALSE == IntersectRect(&x, &w, &d)
-        || x.right - x.left < 20
-        || x.bottom - x.top < 20)
-    {
-        *left = iminmax(*left, x0, x0+dx-width);
-        *top = iminmax(*top, y0, y0+dy-height);
-    }
+	x0 = getWorkspaces().GetVScreenX();
+	y0 = getWorkspaces().GetVScreenY();
+	dx = getWorkspaces().GetVScreenWidth();
+	dy = getWorkspaces().GetVScreenHeight();
+	d.right = (d.left = x0) + dx,
+		d.bottom = (d.top = y0) + dy;
+	w.right = (w.left = *left) + width,
+		w.bottom = (w.top = *top) + height;
+	if (FALSE == IntersectRect(&x, &w, &d)
+		|| x.right - x.left < 20
+		|| x.bottom - x.top < 20)
+	{
+		*left = iminmax(*left, x0, x0 + dx - width);
+		*top = iminmax(*top, y0, y0 + dy - height);
+	}
 }
 
-ST void center_window(int *left, int *top, int width, int height)
+ST void center_window(int* left, int* top, int width, int height)
 {
-    int x0, dx, w2;
-    x0 = getWorkspaces().GetVScreenX() - SCREEN_DIST;
-    dx = getWorkspaces().GetVScreenWidth() + SCREEN_DIST;
-    w2 = width/2;
-    while (*left+w2 < x0) *left += dx;
-    while (*left+w2 >= x0+dx) *left -= dx;
+	int x0, dx, w2;
+	x0 = getWorkspaces().GetVScreenX() - SCREEN_DIST;
+	dx = getWorkspaces().GetVScreenWidth() + SCREEN_DIST;
+	w2 = width / 2;
+	while (*left + w2 < x0) *left += dx;
+	while (*left + w2 >= x0 + dx) *left -= dx;
 }
 
 // WINDOWPLACEMENT's rcNormalPosition seems to be relative to the workarea:
-ST void add_workarea(RECT *p, int d)
+ST void add_workarea(RECT* p, int d)
 {
-    POINT m; RECT w; int dx, dy;
-    m.x = (p->left + p->right)/2;
-    m.y = (p->top + p->bottom)/2;
-    GetMonitorRect(&m, &w, GETMON_WORKAREA|GETMON_FROM_POINT);
-    dx = d * w.left;
-    dy = d * w.top;
-    p->left += dx;
-    p->top += dy;
-    p->right += dx;
-    p->bottom += dy;
+	POINT m; RECT w; int dx, dy;
+	m.x = (p->left + p->right) / 2;
+	m.y = (p->top + p->bottom) / 2;
+	GetMonitorRect(&m, &w, GETMON_WORKAREA | GETMON_FROM_POINT);
+	dx = d * w.left;
+	dy = d * w.top;
+	p->left += dx;
+	p->top += dy;
+	p->right += dx;
+	p->bottom += dy;
 }
 
-ST bool set_normal_position(HWND hwnd, RECT *p)
+ST bool set_normal_position(HWND hwnd, RECT* p)
 {
-    WINDOWPLACEMENT wp;
-    wp.length = sizeof wp;
-    if (!GetWindowPlacement(hwnd, &wp))
-        return false;
-    wp.rcNormalPosition = *p;
-    p = &wp.rcNormalPosition;
-    add_workarea(p, -1);
-    return FALSE != SetWindowPlacement(hwnd, &wp);
+	WINDOWPLACEMENT wp;
+	wp.length = sizeof wp;
+	if (!GetWindowPlacement(hwnd, &wp))
+		return false;
+	wp.rcNormalPosition = *p;
+	p = &wp.rcNormalPosition;
+	add_workarea(p, -1);
+	return FALSE != SetWindowPlacement(hwnd, &wp);
 }
 
-ST bool get_normal_position(HWND hwnd, RECT *p)
+ST bool get_normal_position(HWND hwnd, RECT* p)
 {
-    WINDOWPLACEMENT wp;
-    wp.length = sizeof wp;
-    if (!GetWindowPlacement(hwnd, &wp))
-        return false;
-    *p = wp.rcNormalPosition;
-    add_workarea(p, 1);
-    return true;
+	WINDOWPLACEMENT wp;
+	wp.length = sizeof wp;
+	if (!GetWindowPlacement(hwnd, &wp))
+		return false;
+	*p = wp.rcNormalPosition;
+	add_workarea(p, 1);
+	return true;
 }
 
 //=========================================================
 
 ST HWND get_root(HWND hwnd)
 {
-    HWND parent, deskwnd = GetDesktopWindow();
-    while (NULL != (parent = GetWindow(hwnd, GW_OWNER)) && deskwnd != parent)
-        hwnd = parent;
-    return hwnd;
+	HWND parent, deskwnd = GetDesktopWindow();
+	while (NULL != (parent = GetWindow(hwnd, GW_OWNER)) && deskwnd != parent)
+		hwnd = parent;
+	return hwnd;
 }
 
-ST bool belongs_to_app(winlist *win, winlist *app)
+ST bool belongs_to_app(winlist* win, winlist* app)
 {
-    if (win->root == app->root)
-        return true;
-    if (win->threadid == app->threadid && win->istool)
-        return true;
-    return false;
+	if (win->root == app->root)
+		return true;
+	if (win->threadid == app->threadid && win->istool)
+		return true;
+	return false;
 }
 
-ST void check_appwindows(winlist *wl_app)
+ST void check_appwindows(winlist* wl_app)
 {
-    winlist *wl;
-    if (wl_app->istool)
-        dolist (wl, vwm_WL)
-            if (false == wl->istool && belongs_to_app(wl_app, wl)) {
-                wl_app = wl;
-                break;
-            }
-    dolist (wl, vwm_WL)
-        wl->check = belongs_to_app(wl, wl_app);
+	winlist* wl;
+	if (wl_app->istool)
+		dolist(wl, vwm_WL)
+		if (false == wl->istool && belongs_to_app(wl_app, wl))
+		{
+			wl_app = wl;
+			break;
+		}
+	dolist(wl, vwm_WL)
+		wl->check = belongs_to_app(wl, wl_app);
 }
 
 //=========================================================
 ST void defer_windows(int newdesk)
 {
-    winlist *wl;
-    HDWP dwp, dwp_new;
-    bool gather, winmoved, deskchanged;
+	winlist* wl;
+	HDWP dwp, dwp_new;
+	bool gather, winmoved, deskchanged;
 
-    gather = newdesk < 0;
+	gather = newdesk < 0;
 
-    if (gather)
-        newdesk = getWorkspaces().GetScreenCurrent();
+	if (gather)
+		newdesk = getWorkspaces().GetScreenCurrent();
 
-    if (newdesk >= getWorkspaces().GetScreenCount())
-        newdesk = getWorkspaces().GetScreenCount() - 1;
+	if (newdesk >= getWorkspaces().GetScreenCount())
+		newdesk = getWorkspaces().GetScreenCount() - 1;
 
-    deskchanged = getWorkspaces().GetScreenCurrent() != newdesk;
-    if (deskchanged)
-        getWorkspaces().SetScreenLast(getWorkspaces().GetScreenCurrent());
-    getWorkspaces().SetScreenCurrent(newdesk);
-    winmoved = false;
+	deskchanged = getWorkspaces().GetScreenCurrent() != newdesk;
+	if (deskchanged)
+		getWorkspaces().SetScreenLast(getWorkspaces().GetScreenCurrent());
+	getWorkspaces().SetScreenCurrent(newdesk);
+	winmoved = false;
 
-    if (vwm_WL) {
-        dwp = BeginDeferWindowPos(listlen(vwm_WL));
-        dolist (wl, vwm_WL)
-        {
-            int left, top, width, height;
-            UINT flags;
+	if (vwm_WL)
+	{
+		dwp = BeginDeferWindowPos(listlen(vwm_WL));
+		dolist(wl, vwm_WL)
+		{
+			int left, top, width, height;
+			UINT flags;
 
-            // frozen windows would freeze blackbox in
-            // "EndDeferWindowPos" below
-            if (is_frozen(wl->hwnd))
-                goto next;
+			// frozen windows would freeze blackbox in
+			// "EndDeferWindowPos" below
+			if (is_frozen(wl->hwnd))
+				goto next;
 
-            if (gather || wl->sticky) {
-                wl->desk = newdesk;
-                if (false == gather && false == wl->moved)
-                    goto next;
-            }
+			if (gather || wl->sticky)
+			{
+				wl->desk = newdesk;
+				if (false == gather && false == wl->moved)
+					goto next;
+			}
 
-            if (wl->desk >= getWorkspaces().GetScreenCount())
-                wl->desk = getWorkspaces().GetScreenCount() - 1;
+			if (wl->desk >= getWorkspaces().GetScreenCount())
+				wl->desk = getWorkspaces().GetScreenCount() - 1;
 
-            left = wl->rect.left;
-            top = wl->rect.top;
-            width = wl->rect.right - left;
-            height = wl->rect.bottom - top;
+			left = wl->rect.left;
+			top = wl->rect.top;
+			width = wl->rect.right - left;
+			height = wl->rect.bottom - top;
 
-            // hack for some fancy, zero sized but visible message windows
-            if ((height == 0 || width == 0) && false == wl->moved)
-                goto next;
+			// hack for some fancy, zero sized but visible message windows
+			if ((height == 0 || width == 0) && false == wl->moved)
+				goto next;
 
-            if (wl->iconic && false == vwm_alt_method) {
-                if (wl->moved && newdesk == wl->desk) {
-                    // The window was iconized while on other WS
-                    // which should not happen, but just in case:
-                    set_normal_position(wl->hwnd, &wl->rect);
-                    wl->moved = false;
-                }
-                goto next;
-            }
+			if (wl->iconic && false == vwm_alt_method)
+			{
+				if (wl->moved && newdesk == wl->desk)
+				{
+					// The window was iconized while on other WS
+					// which should not happen, but just in case:
+					set_normal_position(wl->hwnd, &wl->rect);
+					wl->moved = false;
+				}
+				goto next;
+			}
 
-            wl->moved = newdesk != wl->desk;
+			wl->moved = newdesk != wl->desk;
 
-            if (vwm_alt_method) {
-                if (wl->moved) {
-                    // windows on other WS's are hidden
-                    flags = SWP_NOSIZE|SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE|SWP_HIDEWINDOW;
-                } else {
-                    flags = SWP_NOSIZE|SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE|SWP_SHOWWINDOW;
-                }
-            } else {
-                if (wl->moved) {
-                    // windows on other WS's are moved
-                    int dx = getWorkspaces().GetVScreenWidth() + SCREEN_DIST;
-                    if (vwm_styleXPFix)
-                        left += dx * 2; // move 2 screens to the right
-                    else
-                        left += dx * (wl->desk - newdesk); // natural order
-                } else if (gather) {
-                    // with gather, force windows on screen
-                    fix_window(&left, &top, width, height);
-                }
-                flags = SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE;
-            }
+			if (vwm_alt_method)
+			{
+				if (wl->moved)
+				{
+					// windows on other WS's are hidden
+					flags = SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_HIDEWINDOW;
+				}
+				else
+				{
+					flags = SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW;
+				}
+			}
+			else
+			{
+				if (wl->moved)
+				{
+					// windows on other WS's are moved
+					int dx = getWorkspaces().GetVScreenWidth() + SCREEN_DIST;
+					if (vwm_styleXPFix)
+						left += dx * 2; // move 2 screens to the right
+					else
+						left += dx * (wl->desk - newdesk); // natural order
+				}
+				else if (gather)
+				{
+					// with gather, force windows on screen
+					fix_window(&left, &top, width, height);
+				}
+				flags = SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE;
+			}
 
-            dwp_new = DeferWindowPos(dwp, wl->hwnd, NULL, left, top, width, height, flags);
-    #if 0
-            char buffer[100];
-            GetClassName(wl->hwnd, buffer, sizeof buffer);
-            dbg_printf ("defer: %x %x <%s>", dwp_new, wl->hwnd, buffer);
-    #endif
-            if (dwp_new) {
-                dwp = dwp_new;
-            } else {
-                wl->desk = wl->prev_desk;
-                wl->moved = newdesk != wl->desk;
-            }
+			dwp_new = DeferWindowPos(dwp, wl->hwnd, NULL, left, top, width, height, flags);
+#if 0
+			char buffer[100];
+			GetClassName(wl->hwnd, buffer, sizeof buffer);
+			dbg_printf("defer: %x %x <%s>", dwp_new, wl->hwnd, buffer);
+#endif
+			if (dwp_new)
+			{
+				dwp = dwp_new;
+			}
+			else
+			{
+				wl->desk = wl->prev_desk;
+				wl->moved = newdesk != wl->desk;
+			}
 
-        next:
-            if (wl->prev_desk != wl->desk) {
-                winmoved = true;
-                wl->prev_desk = wl->desk;
-            }
-        }
+			next:
+			if (wl->prev_desk != wl->desk)
+			{
+				winmoved = true;
+				wl->prev_desk = wl->desk;
+			}
+		}
 
-        EndDeferWindowPos(dwp);
-        Sleep(1);
-    }
+		EndDeferWindowPos(dwp);
+		Sleep(1);
+	}
 
-    // update wkspc members in the tasklist
-    getWorkspaces().workspaces_set_desk();
-    // send notifications
-    if (deskchanged)
-        getWorkspaces().send_desk_refresh();
-    if (winmoved)
-        getWorkspaces().send_task_refresh();
+	// update wkspc members in the tasklist
+	getWorkspaces().workspaces_set_desk();
+	// send notifications
+	if (deskchanged)
+		getWorkspaces().send_desk_refresh();
+	if (winmoved)
+		getWorkspaces().send_task_refresh();
 }
 
 //=========================================================
 
-ST void explicit_move(winlist *wl)
+ST void explicit_move(winlist* wl)
 {
-    if (!wl->iconic && !is_frozen(wl->hwnd))
-        SetWindowPos(wl->hwnd, NULL,
-            wl->rect.left,
-            wl->rect.top,
-            wl->rect.right - wl->rect.left,
-            wl->rect.bottom - wl->rect.top,
-            SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE
-            );
+	if (!wl->iconic && !is_frozen(wl->hwnd))
+		SetWindowPos(wl->hwnd, NULL,
+			wl->rect.left,
+			wl->rect.top,
+			wl->rect.right - wl->rect.left,
+			wl->rect.bottom - wl->rect.top,
+			SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE
+		);
 }
 
-ST bool set_location_helper(HWND hwnd, taskinfo const * t, unsigned flags)
+ST bool set_location_helper(HWND hwnd, taskinfo const* t, unsigned flags)
 {
-    winlist *wl;
-    int dx, dy, new_desk, switch_desk, window_desk;
-    bool defer, move_before;
+	winlist* wl;
+	int dx, dy, new_desk, switch_desk, window_desk;
+	bool defer, move_before;
 
-    wl = (winlist*)assoc(vwm_WL, hwnd);
-    if (NULL == wl)
-        return false;
+	wl = (winlist*)assoc(vwm_WL, hwnd);
+	if (NULL == wl)
+		return false;
 
-    dx = t->xpos - wl->rect.left;
-    dy = t->ypos - wl->rect.top;
-    new_desk = t->desk;
-    if (flags & (BBTI_SWITCHTO|BBTI_SETDESK))
-        if (new_desk < 0 || new_desk >= getWorkspaces().GetScreenCount())
-            return false;
+	dx = t->xpos - wl->rect.left;
+	dy = t->ypos - wl->rect.top;
+	new_desk = t->desk;
+	if (flags & (BBTI_SWITCHTO | BBTI_SETDESK))
+		if (new_desk < 0 || new_desk >= getWorkspaces().GetScreenCount())
+			return false;
 
-    switch_desk = flags & BBTI_SWITCHTO ? new_desk : getWorkspaces().GetScreenCurrent();
-    window_desk = flags & BBTI_SETDESK ? new_desk : wl->desk;
-    move_before = switch_desk == window_desk;
+	switch_desk = flags & BBTI_SWITCHTO ? new_desk : getWorkspaces().GetScreenCurrent();
+	window_desk = flags & BBTI_SETDESK ? new_desk : wl->desk;
+	move_before = switch_desk == window_desk;
 
-    check_appwindows(wl);
-    defer = switch_desk != getWorkspaces().GetScreenCurrent();
+	check_appwindows(wl);
+	defer = switch_desk != getWorkspaces().GetScreenCurrent();
 
-    dolist (wl, vwm_WL)
-        if (wl->check) {
-            if (flags & BBTI_SETDESK) {
-                if (wl->desk != new_desk) {
-                    wl->desk = new_desk;
-                    defer = true;
-                }
-            }
+	dolist(wl, vwm_WL)
+		if (wl->check)
+		{
+			if (flags & BBTI_SETDESK)
+			{
+				if (wl->desk != new_desk)
+				{
+					wl->desk = new_desk;
+					defer = true;
+				}
+			}
 
-            if (flags & BBTI_SETPOS) {
-                wl->rect.top += dy;
-                wl->rect.bottom += dy;
-                wl->rect.left += dx;
-                wl->rect.right += dx;
-                if (vwm_alt_method) {
-                    if (move_before)
-                        explicit_move(wl);
-                } else {
-                    defer = true;
-                }
-            }
-        }
+			if (flags & BBTI_SETPOS)
+			{
+				wl->rect.top += dy;
+				wl->rect.bottom += dy;
+				wl->rect.left += dx;
+				wl->rect.right += dx;
+				if (vwm_alt_method)
+				{
+					if (move_before)
+						explicit_move(wl);
+				}
+				else
+				{
+					defer = true;
+				}
+			}
+		}
 
-    if (defer)
-        defer_windows(switch_desk);
+	if (defer)
+		defer_windows(switch_desk);
 
-    if (vwm_alt_method && (flags & BBTI_SETPOS) && false == move_before)
-        dolist (wl, vwm_WL)
-            if (wl->check)
-                explicit_move(wl);
+	if (vwm_alt_method && (flags & BBTI_SETPOS) && false == move_before)
+		dolist(wl, vwm_WL)
+		if (wl->check)
+			explicit_move(wl);
 
-    return true;
+	return true;
 }
 
 //=========================================================
@@ -492,103 +530,104 @@ ST bool set_location_helper(HWND hwnd, taskinfo const * t, unsigned flags)
 
 void vwm_switch(int new_desk)
 {
-    if (new_desk < 0 || new_desk >= getWorkspaces().GetScreenCount())
-        return;
-    vwm_update_winlist();
-    defer_windows(new_desk);
+	if (new_desk < 0 || new_desk >= getWorkspaces().GetScreenCount())
+		return;
+	vwm_update_winlist();
+	defer_windows(new_desk);
 }
 
 void vwm_gather(void)
 {
-    vwm_update_winlist();
-    defer_windows(-1);
-    if (vwm_alt_method) {
-        vwm_alt_method = false;
-        vwm_gather();
-        vwm_alt_method = true;
-    }
+	vwm_update_winlist();
+	defer_windows(-1);
+	if (vwm_alt_method)
+	{
+		vwm_alt_method = false;
+		vwm_gather();
+		vwm_alt_method = true;
+	}
 }
 
 //=========================================================
 // Set window properties
 
-bool vwm_set_location(HWND hwnd, struct taskinfo const *t, unsigned flags)
+bool vwm_set_location(HWND hwnd, struct taskinfo const* t, unsigned flags)
 {
-    vwm_update_winlist();
-    return set_location_helper(hwnd, t, flags);
+	vwm_update_winlist();
+	return set_location_helper(hwnd, t, flags);
 }
 
 bool vwm_set_desk(HWND hwnd, int new_desk, bool switchto)
 {
-    struct taskinfo t;
-    unsigned flags;
+	struct taskinfo t;
+	unsigned flags;
 
-    if (new_desk < 0 || new_desk >= getWorkspaces().GetScreenCount())
-        return false;
+	if (new_desk < 0 || new_desk >= getWorkspaces().GetScreenCount())
+		return false;
 
-    t.desk = new_desk;
-    t.xpos = t.ypos = 0;
-    flags = switchto ? BBTI_SWITCHTO|BBTI_SETDESK : BBTI_SETDESK;
-    return vwm_set_location(hwnd, &t, flags);
+	t.desk = new_desk;
+	t.xpos = t.ypos = 0;
+	flags = switchto ? BBTI_SWITCHTO | BBTI_SETDESK : BBTI_SETDESK;
+	return vwm_set_location(hwnd, &t, flags);
 }
 
 bool vwm_set_workspace(HWND hwnd, int new_desk)
 {
-    // BBPager hack: redo it's move (cannot call vwm_update_winlist here)
-    RECT r;
-    struct taskinfo t;
+	// BBPager hack: redo it's move (cannot call vwm_update_winlist here)
+	RECT r;
+	struct taskinfo t;
 
-    GetWindowRect(hwnd, &r);
-    center_window((int*)&r.left, (int*)&r.top, r.right - r.left, r.bottom - r.top);
-    t.desk  = new_desk;
-    t.xpos  = r.left;
-    t.ypos  = r.top;
-    return set_location_helper(hwnd, &t, BBTI_SETDESK|BBTI_SETPOS);
+	GetWindowRect(hwnd, &r);
+	center_window((int*)&r.left, (int*)&r.top, r.right - r.left, r.bottom - r.top);
+	t.desk = new_desk;
+	t.xpos = r.left;
+	t.ypos = r.top;
+	return set_location_helper(hwnd, &t, BBTI_SETDESK | BBTI_SETPOS);
 }
 
 bool vwm_set_sticky(HWND hwnd, bool set)
 {
-    winlist *wl;
-    if (FALSE == IsWindow(hwnd))
-        return false;
-    wl = vwm_add_window(hwnd);
-    if (NULL == wl)
-        return false;
-    wl->sticky_app = set;
-    return true;
+	winlist* wl;
+	if (FALSE == IsWindow(hwnd))
+		return false;
+	wl = vwm_add_window(hwnd);
+	if (NULL == wl)
+		return false;
+	wl->sticky_app = set;
+	return true;
 }
 
 bool vwm_set_onbg(HWND hwnd, bool set)
 {
-    winlist *wl;
-    if (FALSE == IsWindow(hwnd))
-        return false;
-    wl = vwm_add_window(hwnd);
-    if (NULL == wl)
-        return false;
-    wl->onbg = set;
-    return true;
+	winlist* wl;
+	if (FALSE == IsWindow(hwnd))
+		return false;
+	wl = vwm_add_window(hwnd);
+	if (NULL == wl)
+		return false;
+	wl->onbg = set;
+	return true;
 }
 
 static void bottomize(HWND hwnd)
 {
-    if (!is_frozen(hwnd))
-        SetWindowPos(hwnd, HWND_BOTTOM, 0, 0, 0, 0,
-            SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOMOVE|SWP_NOSENDCHANGING);
+	if (!is_frozen(hwnd))
+		SetWindowPos(hwnd, HWND_BOTTOM, 0, 0, 0, 0,
+			SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOMOVE | SWP_NOSENDCHANGING);
 }
 
 bool vwm_lower_window(HWND hwnd)
 {
-    winlist *wl;
-    vwm_update_winlist();
-    wl = (winlist*)assoc(vwm_WL, hwnd);
-    if (NULL == wl)
-        return false;
-    check_appwindows(wl);
-    dolist (wl, vwm_WL)
-        if (wl->check)
-            bottomize(wl->hwnd);
-    return true;
+	winlist* wl;
+	vwm_update_winlist();
+	wl = (winlist*)assoc(vwm_WL, hwnd);
+	if (NULL == wl)
+		return false;
+	check_appwindows(wl);
+	dolist(wl, vwm_WL)
+		if (wl->check)
+			bottomize(wl->hwnd);
+	return true;
 }
 
 //=========================================================
@@ -596,56 +635,62 @@ bool vwm_lower_window(HWND hwnd)
 
 int vwm_get_desk(HWND hwnd)
 {
-    winlist *wl = (winlist*)assoc(vwm_WL, hwnd);
-    return wl ? wl->desk : getWorkspaces().GetScreenCurrent();
+	winlist* wl = (winlist*)assoc(vwm_WL, hwnd);
+	return wl ? wl->desk : getWorkspaces().GetScreenCurrent();
 }
 
-bool vwm_get_location(HWND hwnd, struct taskinfo *t)
+bool vwm_get_location(HWND hwnd, struct taskinfo* t)
 {
-    winlist *wl; RECT rp, *p;
+	winlist* wl; RECT rp, * p;
 
-    wl = (winlist*)assoc(vwm_WL, hwnd);
-    if (wl && wl->moved) {
-        p = &wl->rect;
-    } else {
-        p = &rp;
-        if (IsIconic(hwnd)) {
-            if (false == get_normal_position(hwnd, p))
-                return false;
-        } else {
-            if (FALSE == GetWindowRect(hwnd, p))
-                return false;
-        }
-    }
-    t->desk = wl ? wl->desk : getWorkspaces().GetScreenCurrent();
-    t->xpos = p->left;
-    t->ypos = p->top;
-    t->width = p->right - p->left;
-    t->height = p->bottom - p->top;
-    return true;
+	wl = (winlist*)assoc(vwm_WL, hwnd);
+	if (wl && wl->moved)
+	{
+		p = &wl->rect;
+	}
+	else
+	{
+		p = &rp;
+		if (IsIconic(hwnd))
+		{
+			if (false == get_normal_position(hwnd, p))
+				return false;
+		}
+		else
+		{
+			if (FALSE == GetWindowRect(hwnd, p))
+				return false;
+		}
+	}
+	t->desk = wl ? wl->desk : getWorkspaces().GetScreenCurrent();
+	t->xpos = p->left;
+	t->ypos = p->top;
+	t->width = p->right - p->left;
+	t->height = p->bottom - p->top;
+	return true;
 }
 
 bool vwm_get_status(HWND hwnd, E_VwmStatus what)
 {
-    winlist *wl;
-    wl = (winlist*)assoc(vwm_WL, hwnd);
-    if (wl)
-    {
-        switch (what)
-        {
-          case VWM_MOVED:  return wl->moved;
-          case VWM_STICKY: return wl->sticky_app;
-          case VWM_HIDDEN: return wl->hidden;
-          case VWM_ICONIC: return wl->iconic;
-          case VWM_ONBG:   return wl->onbg;
-        }
-    }
-    else
-        switch (what)
-        {
-            case VWM_STICKY: return getWorkspaces().CheckStickyName(hwnd);
-        }
-    return false;
+	winlist* wl;
+	wl = (winlist*)assoc(vwm_WL, hwnd);
+	if (wl)
+	{
+		switch (what)
+		{
+			case VWM_MOVED:  return wl->moved;
+			case VWM_STICKY: return wl->sticky_app;
+			case VWM_HIDDEN: return wl->hidden;
+			case VWM_ICONIC: return wl->iconic;
+			case VWM_ONBG:   return wl->onbg;
+		}
+	}
+	else
+		switch (what)
+		{
+			case VWM_STICKY: return getWorkspaces().CheckStickyName(hwnd);
+		}
+	return false;
 }
 
 //=========================================================
@@ -653,48 +698,49 @@ bool vwm_get_status(HWND hwnd, E_VwmStatus what)
 
 void vwm_init(void)
 {
-    vwm_alt_method = Settings_altMethod;
-    vwm_styleXPFix = Settings_styleXPFix;
-    vwm_enabled = getWorkspaces().GetScreenCount() > 1;
+	vwm_alt_method = Settings_altMethod;
+	vwm_styleXPFix = Settings_styleXPFix;
+	vwm_enabled = getWorkspaces().GetScreenCount() > 1;
 }
 
 void vwm_exit(void)
 {
-    freeall(&vwm_WL);
+	freeall(&vwm_WL);
 }
 
 void vwm_reconfig(bool defer)
 {
-    winlist *wl;
+	winlist* wl;
 
-    if (vwm_alt_method != Settings_altMethod || vwm_styleXPFix != Settings_styleXPFix)
-    {
-        // backup desk:
-        dolist (wl, vwm_WL)
-            wl->save_desk = wl->desk;
-        // gather
-        vwm_gather();
-        // restore desk:
-        dolist (wl, vwm_WL)
-            wl->desk = wl->save_desk;
-        vwm_alt_method = Settings_altMethod;
-        vwm_styleXPFix = Settings_styleXPFix;
-        defer = true;
-    }
+	if (vwm_alt_method != Settings_altMethod || vwm_styleXPFix != Settings_styleXPFix)
+	{
+		// backup desk:
+		dolist(wl, vwm_WL)
+			wl->save_desk = wl->desk;
+		// gather
+		vwm_gather();
+		// restore desk:
+		dolist(wl, vwm_WL)
+			wl->desk = wl->save_desk;
+		vwm_alt_method = Settings_altMethod;
+		vwm_styleXPFix = Settings_styleXPFix;
+		defer = true;
+	}
 
-    dolist (wl, vwm_WL)
-        if (wl->desk >= getWorkspaces().GetScreenCount())
-            defer = true;
+	dolist(wl, vwm_WL)
+		if (wl->desk >= getWorkspaces().GetScreenCount())
+			defer = true;
 
-    if (getWorkspaces().GetScreenCurrent() >= getWorkspaces().GetScreenCount()) {
-        getWorkspaces().SetScreenCurrent(getWorkspaces().GetScreenCount() - 1);
-        defer = true;
-    }
+	if (getWorkspaces().GetScreenCurrent() >= getWorkspaces().GetScreenCount())
+	{
+		getWorkspaces().SetScreenCurrent(getWorkspaces().GetScreenCount() - 1);
+		defer = true;
+	}
 
-    if (defer)
-        vwm_switch(getWorkspaces().GetScreenCurrent());
+	if (defer)
+		vwm_switch(getWorkspaces().GetScreenCurrent());
 
-    vwm_enabled = getWorkspaces().GetScreenCount() > 1;
+	vwm_enabled = getWorkspaces().GetScreenCount() > 1;
 }
 
 //=========================================================

@@ -1,0 +1,13 @@
+BlackboxBar.placement: BottomCenter
+BlackboxBar.position.x: 960
+BlackboxBar.position.y: 1080
+BlackboxBar.useSlit: false
+BlackboxBar.alwaysOnTop: false
+BlackboxBar.autoHide: false
+BlackboxBar.clickRaise: true
+BlackboxBar.snapWindow: 20
+BlackboxBar.pluginToggle: true
+BlackboxBar.alpha.enabled: false
+BlackboxBar.alpha.value: 192
+BlackboxBar.icon.saturation: 80
+BlackboxBar.icon.hue: 60

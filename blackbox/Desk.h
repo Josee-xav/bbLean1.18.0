@@ -22,22 +22,22 @@
 #ifndef _BBDESK_H_
 #define _BBDESK_H_
 
-//===========================================================================
 
-void Desk_Exit(void);
-void Desk_Init(void);
-void ShowExplorer(void);
-void HideExplorer(void);
 
-void Desk_new_background(const char *rootCommand);
-void Desk_read_background(const char *rootCommand);
-const char * Desk_extended_rootCommand(const char *p);
+void Desk_Exit();
+void Desk_Init();
+void ShowExplorer();
+void HideExplorer();
+
+void Desk_new_background(const char* rootCommand);
+void Desk_read_background(const char* rootCommand);
+const char* Desk_extended_rootCommand(const char* p);
 bool Desk_mousebutton_event(int button);
 void Desk_Reset(bool all);
 HBITMAP Desk_getbmp(void);
 
 extern HWND hDesktopWnd;
 
-//===========================================================================
+
 
 #endif /* _BBDESK_H_ */

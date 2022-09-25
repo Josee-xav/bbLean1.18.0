@@ -25,12 +25,11 @@
 #include "PluginManager/PluginManager.h"
 #include "Workspaces.h"
 #include "Tray.h"
-#include "Toolbar.h"
 #include "Menu/MenuMaker.h"
 
-//===========================================================================
+
 static const struct int_item {
-	const int *v; short minval, maxval, offval;
+	const int* v; short minval, maxval, offval;
 } int_items[] = {
 	{ &Settings_menu.mouseWheelFactor		,	1,	  10, -2  },
 	{ &Settings_menu.popupDelay				,	0,	1000, -2  },/* BlackboxZero 1.3.2012 - Was 400 */
@@ -59,14 +58,14 @@ static const struct int_item {
 	{ NULL, 0, 0, 0}
 };
 
-static const struct int_item *get_int_item(const void *v)
+static const struct int_item* get_int_item(const void* v)
 {
-	const struct int_item *p = int_items;
+	const struct int_item* p = int_items;
 	do if (p->v == v) return p; while ((++p)->v);
 	return NULL;
 }
 
-static bool is_string_item(const void *v)
+static bool is_string_item(const void* v)
 {
 	return v == &Settings_preferredEditor
 		|| v == Settings_toolbar.strftimeFormat
@@ -74,7 +73,7 @@ static bool is_string_item(const void *v)
 		;
 }
 
-static bool is_fixed_string(const void *v)
+static bool is_fixed_string(const void* v)
 {
 	return v == Settings_focusModel
 		|| v == Settings_menu.openDirection
@@ -85,7 +84,7 @@ static bool is_fixed_string(const void *v)
 		;
 }
 
-//===========================================================================
+
 
 static const struct cfgmenu cfg_sub_plugins[] = {
 	{ NLS0("Load/Unload"),			NULL, (const void*)SUB_PLUGIN_LOAD },
@@ -267,7 +266,7 @@ static const struct cfgmenu cfg_sub_workspace[] = {
 	{ NULL,NULL,NULL }
 };
 
-/* BlackboxZero 1.3.2012
+/* BlackboxZero 1.3.2012b J_sep nts123333
 Main portion of config menu #4(Misc.) */
 static const struct cfgmenu cfg_sub_misc[] = {
 	{ NLS0("Desktop Margins"),		NULL, cfg_sub_dm },			/* Menu #4.1 - BlackboxZero 1.3.2012 */
@@ -282,8 +281,8 @@ static const struct cfgmenu cfg_sub_misc[] = {
 	{ NLS0("Use UTF-8 Encoding"),	"UTF8Encoding",			&Settings_UTF8Encoding },
 	{ "", NULL, NULL },
 	{ NLS0("Blackbox Editor"),		"preferredEditor",		&Settings_preferredEditor },
-	{ NLS0("Edit StickyWindows"),	"@BBCore.Edit stickywindows.ini", NULL },	  
-	{ NLS0("Edit BgWindows"),		"@BBCore.Edit bgwindows.ini", NULL },	  
+	{ NLS0("Edit StickyWindows"),	"@BBCore.Edit stickywindows.ini", NULL },
+	{ NLS0("Edit BgWindows"),		"@BBCore.Edit bgwindows.ini", NULL },
 	{ NLS0("Show Appnames"),		"@BBCore.showAppnames", NULL },
 	{ NULL,NULL,NULL }
 };
@@ -301,13 +300,13 @@ static const struct cfgmenu cfg_main[] = {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//===========================================================================
+
 /* BlackboxZero 1.3.2012
 Here -> down is just stuff to build the configuration menus */
-Menu *MakeConfigMenu(bool popup)
+Menu* MakeConfigMenu(bool popup)
 {
 	char menu_id[200];
-	Menu *m;
+	Menu* m;
 
 	Core_IDString(menu_id, "Configuration");
 	m = CfgMenuMaker(NLS0("Configuration"), "@BBCfg.", cfg_main, popup, menu_id);
@@ -315,34 +314,34 @@ Menu *MakeConfigMenu(bool popup)
 #if 0
 	char buff[MAX_PATH];
 	FindRCFile(buff, "plugins\\bbleanskin\\bblsmenu.rc", NULL);
-	Menu *s = MakeRootMenu("Configuration_BBLS", buff, NULL, popup);
+	Menu* s = MakeRootMenu("Configuration_BBLS", buff, NULL, popup);
 	if (s) MakeSubmenu(m, s, NULL);
 #endif
 
 	return m;
 }
 
-//===========================================================================
 
-Menu *CfgMenuMaker(const char *title, const char *defbroam, const struct cfgmenu *pm, bool pop, char *menu_id)
+
+Menu* CfgMenuMaker(const char* title, const char* defbroam, const struct cfgmenu* pm, bool pop, char* menu_id)
 {
 	char buf[100];
-	char *broam_dot;
-	char *end_id;
-	Menu *pMenu, *pSub;
+	char* broam_dot;
+	char* end_id;
+	Menu* pMenu, * pSub;
 
 	end_id = strchr(menu_id, 0);
 	pMenu = MakeNamedMenu(title, menu_id, pop);
 	broam_dot = strchr(strcpy_max(buf, defbroam, sizeof buf), 0);
 
-	for (;pm->text; ++pm)
+	for (; pm->text; ++pm)
 	{
-		const char *item_text = pm->text;
-		const void *v = pm->pvalue;
-		const char *cmd = pm->command;
-		const struct int_item *iip;
+		const char* item_text = pm->text;
+		const void* v = pm->pvalue;
+		const char* cmd = pm->command;
+		const struct int_item* iip;
 		bool disabled, checked;
-		MenuItem *pItem;
+		MenuItem* pItem;
 
 		disabled = checked = false;
 		if (cmd)
@@ -350,25 +349,32 @@ Menu *CfgMenuMaker(const char *title, const char *defbroam, const struct cfgmenu
 			if ('@' != *cmd)
 				strcpy(broam_dot, cmd), cmd = buf;
 
-			if (NULL != (iip = get_int_item(v))) {
+			if (NULL != (iip = get_int_item(v)))
+			{
 				pItem = MakeMenuItemInt(
 					pMenu, item_text, cmd, *iip->v, iip->minval, iip->maxval);
 				if (-2 != iip->offval)
 					MenuItemOption(pItem, BBMENUITEM_OFFVAL,
 						iip->offval, 10000 == iip->maxval ? NLS0("auto") : NULL);
 				continue;
-			} else if (is_string_item(v)) {
+			}
+			else if (is_string_item(v))
+			{
 				MakeMenuItemString(pMenu, item_text, cmd, (const char*)v);
 				continue;
-			} else if (is_fixed_string(v)) {
-				checked = 0 == _stricmp((const char *)v, strchr(cmd, ' ')+1);
-			} else if (v) {
+			}
+			else if (is_fixed_string(v))
+			{
+				checked = 0 == _stricmp((const char*)v, strchr(cmd, ' ') + 1);
+			}
+			else if (v)
+			{
 				checked = *(bool*)v;
 			}
 
 			disabled = (v == &Settings_styleXPFix && Settings_altMethod)
-					|| (v == &Settings_menu.dropShadows && false == g_usingXP)
-					;
+				|| (v == &Settings_menu.dropShadows && false == g_usingXP)
+				;
 			pItem = MakeMenuItem(pMenu, item_text, cmd, checked && false == disabled);
 		}
 		else if (v)
@@ -390,28 +396,32 @@ Menu *CfgMenuMaker(const char *title, const char *defbroam, const struct cfgmenu
 		if (disabled)
 			MenuItemOption(pItem, BBMENUITEM_DISABLED);
 	}
-	
+
 	//Add grip to plugin and plugin/slit menu's
-	if ( Settings_menusGripEnabled )
+	if (Settings_menusGripEnabled)
 		MakeMenuGrip(pMenu, title);
 	return pMenu;
 }
 
-//===========================================================================
 
-static const struct cfgmenu * find_cfg_item(
-	const char *cmd,
-	const struct cfgmenu *pmenu,
-	const struct cfgmenu **pp_menu)
+
+static const struct cfgmenu* find_cfg_item(
+	const char* cmd,
+	const struct cfgmenu* pmenu,
+	const struct cfgmenu** pp_menu)
 {
-	const struct cfgmenu *p;
+	const struct cfgmenu* p;
 	for (p = pmenu; p->text; ++p)
-		if (p->command) {
-			if (0 == _memicmp(cmd, p->command, strlen(p->command))) {
-			*pp_menu = pmenu;
-			return p;
+		if (p->command)
+		{
+			if (0 == _memicmp(cmd, p->command, strlen(p->command)))
+			{
+				*pp_menu = pmenu;
+				return p;
 			}
-		} else if (p->pvalue >= (void*)100) {
+		}
+		else if (p->pvalue >= (void*)100)
+		{
 			const struct cfgmenu* psub;
 			psub = find_cfg_item(cmd, (struct cfgmenu*)p->pvalue, pp_menu);
 			if (psub)
@@ -420,31 +430,39 @@ static const struct cfgmenu * find_cfg_item(
 	return NULL;
 }
 
-const void *exec_internal_broam(
-	const char *arg,
-	const struct cfgmenu *menu_root,
-	const struct cfgmenu **p_menu,
-	const struct cfgmenu**p_item)
+const void* exec_internal_broam(
+	const char* arg,
+	const struct cfgmenu* menu_root,
+	const struct cfgmenu** p_menu,
+	const struct cfgmenu** p_item)
 {
-	const void *v = NULL;
+	const void* v = NULL;
 	*p_item = find_cfg_item(arg, menu_root, p_menu);
 	if (NULL == *p_item)
 		return v;
 
 	v = (*p_item)->pvalue;
-	if (v) {
+	if (v)
+	{
 		// scan for a possible argument to the command
 		while (!IS_SPC(*arg))
 			++arg;
 		skip_spc(&arg);
 		// now set the appropriate variable
-		if (is_fixed_string(v)) {
-			strcpy((char *)v, arg);
-		} else if (is_string_item(v)) {
-			strcpy((char *)v, arg);
-		} else if (get_int_item(v)) {
+		if (is_fixed_string(v))
+		{
+			strcpy((char*)v, arg);
+		}
+		else if (is_string_item(v))
+		{
+			strcpy((char*)v, arg);
+		}
+		else if (get_int_item(v))
+		{
 			if (*arg) *(int*)v = atoi(arg);
-		} else {
+		}
+		else
+		{
 			set_bool((bool*)v, arg);
 		}
 		// write to blackbox.rc or extensions.rc (automatic)
@@ -453,14 +471,15 @@ const void *exec_internal_broam(
 	return v;
 }
 
-int exec_cfg_command(const char *argument)
+int exec_cfg_command(const char* argument)
 {
-	const struct cfgmenu *p_menu, *p_item;
-	const void *v;
+	const struct cfgmenu* p_menu, * p_item;
+	const void* v;
 
 	// is it a plugin related command?
-	if (0 == _memicmp(argument, "plugin.", 7)) {
-		if (0 == PluginManager_handleBroam(argument+7))
+	if (0 == _memicmp(argument, "plugin.", 7))
+	{
+		if (0 == PluginManager_handleBroam(argument + 7))
 			return 0;
 		Menu_Update(MENU_UPD_CONFIG);
 		return 1;
@@ -472,23 +491,32 @@ int exec_cfg_command(const char *argument)
 		return 0;
 
 	// now take care for some item-specific refreshes
-	if (v == &Settings_toolbar.enabled) {
-		if (Settings_toolbar.enabled)
-			beginToolbar(hMainInstance);
-		else
-			endToolbar(hMainInstance);
-		Menu_Update(MENU_UPD_CONFIG);
-	} else if (v == &Settings_menu.sortByExtension
-			|| v == &Settings_menu.showHiddenFiles) {
-		PostMessage(BBhwnd, BB_REDRAWGUI, BBRG_MENU|BBRG_FOLDER, 0);
-	} else if (v == &Settings_smartWallpaper) {
+	//if (v == &Settings_toolbar.enabled)
+	//{
+	//	/*if (Settings_toolbar.enabled)
+	//		beginToolbar(hMainInstance);
+	//	else
+	//		endToolbar(hMainInstance);*/
+	//Menu_Update(MENU_UPD_CONFIG);
+	//}
+	if (v == &Settings_menu.sortByExtension
+		|| v == &Settings_menu.showHiddenFiles)
+	{
+		PostMessage(BBhwnd, BB_REDRAWGUI, BBRG_MENU | BBRG_FOLDER, 0);
+	}
+	else if (v == &Settings_smartWallpaper)
+	{
 		Desk_Reset(true);
-	} else if (v == &Settings_menu.dropShadows) {
+	}
+	else if (v == &Settings_menu.dropShadows)
+	{
 		Menu_Exit(), Menu_Init();
-	} else if (v == &Settings_UTF8Encoding) {
+	}
+	else if (v == &Settings_UTF8Encoding)
+	{
 		getWorkspaces().GetCaptions();
 		Tray_SetEncoding();
-		PostMessage(BBhwnd, BB_REDRAWGUI, BBRG_MENU|BBRG_FOLDER, 0);
+		PostMessage(BBhwnd, BB_REDRAWGUI, BBRG_MENU | BBRG_FOLDER, 0);
 	}
 
 	if (p_menu == cfg_sub_graphics || v == &Settings_UTF8Encoding)
@@ -499,5 +527,5 @@ int exec_cfg_command(const char *argument)
 	return 1;
 }
 
-//===========================================================================
+
 

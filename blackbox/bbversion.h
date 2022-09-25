@@ -3,9 +3,9 @@
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 
-#define PROJECT_VERSION = 1.17.1
+#define PROJECT_VERSION = 1.18.1
 #define PROJECT_RELDATE = "2009 - 12 - 08"
-#define BBLEAN_NUMVERSION = 0, 1, 17, 1
+#define BBLEAN_NUMVERSION = 0, 1, 18, 1
 
 #define FONTDATE = 20091208
 #define ZIPDATE = "2009-12-08 1:17"
